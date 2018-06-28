@@ -1,282 +1,141 @@
 
-$(document).ready(function() {
-		$.localScroll();
-		$(".cache").delay(1000).fadeOut(500);
-		$("#wrapper-header").delay(1500).animate({opacity:'1',width:'100%'},500);
-		$("#wrapper-navbar").delay(2000).animate({opacity:'1',height:'60px'},500);
-		$("#main-container-image").delay(2500).animate({opacity:'1'},500);
+$(document).ready(function(){
+	"use strict";
 
-	});
-function GoBack(){
-	history.back();
-}
+	var window_width 	 = $(window).width(),
+	window_height 		 = window.innerHeight,
+	header_height 		 = $(".default-header").height(),
+	header_height_static = $(".site-header.static").outerHeight(),
+	fitscreen 			 = window_height - header_height;
 
-window.onpageshow = function(event) {
-if (event.persisted) {
-    window.location.reload()
-}
-};
-/*TRANSITION PAGE*/
 
-var speed = 'slow';
+	$(".fullscreen").css("height", window_height)
+	$(".fitscreen").css("height", fitscreen);
 
-$('html, body').hide();
+   //-------- Active Sticky Js ----------//
+  $(".default-header").sticky({topSpacing:0});
 
-$(document).ready(function() {
-    $('html, body').fadeIn(speed, function() {
-        $('a[href], button[href]').click(function(event) {
-            var url = $(this).attr('href');
-            if (url.indexOf('#') == 0 || url.indexOf('mailto') == 0 || url.indexOf('http') == 0 || url.indexOf('javascript:') == 0) return;
 
-            event.preventDefault();
-            $('html, body').fadeOut(speed, function() {
-                window.location = url;
-            });
-        });
+     if(document.getElementById("default-select")){
+          $('select').niceSelect();
+    };
+
+    $('.img-pop-up').magnificPopup({
+        type: 'image',
+        gallery:{
+        enabled:true
+        }
     });
-});
 
-/* DISABLE HOVER EFFECT WHILE YOU SCROLL FOR A SMOOTHY NAVIGATION */
+    $('.play-btn').magnificPopup({
+        type: 'iframe',
+        mainClass: 'mfp-fade',
+        removalDelay: 160,
+        preloader: false,
+        fixedContentPos: false
+    });
 
-var body = document.body,
-	timer;
 
-window.addEventListener('scroll', function() {
-
-	clearTimeout(timer);
-
-	if(!body.classList.contains('disable-hover'))
-		body.classList.add('disable-hover')
-
-	timer = setTimeout(function(){
-		body.classList.remove('disable-hover')
-	}, 200);
-
-}, false);
-
-  /* BOUTON MENU
-
-$(document).on('touchstart mouseover', '#stripes', function(event){
-
-        event.stopPropagation();
+    // Select all links with hashes
+    $('.navbar-nav a[href*="#"]')
+    // Remove links that don't actually link to anything
+    .not('[href="#"]')
+    .not('[href="#0"]')
+    .on('click',function(event) {
+    // On-page links
+    if (
+      location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '')
+      &&
+      location.hostname == this.hostname
+    ) {
+      // Figure out element to scroll to
+      var target = $(this.hash);
+      target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
+      // Does a scroll target exist?
+      if (target.length) {
+        // Only prevent default if animation is actually gonna happen
         event.preventDefault();
-        if(event.handled !== true) {
-
-			   $("#stripes").stop().animate({scale:'1.2',opacity:'0.5'},300);
-
-            event.handled = true;
-        } else {
+        $('html, body').animate({
+          scrollTop: target.offset().top-50
+        }, 1000, function() {
+          // Callback after animation
+          // Must change focus!
+          var $target = $(target);
+          $target.focus();
+          if ($target.is(":focus")) { // Checking if the target was focused
             return false;
+          } else {
+            $target.attr('tabindex','-1'); // Adding tabindex for elements not focusable
+            $target.focus(); // Set focus again
+          };
+        });
+      }
+    }
+    });
+
+
+    $(document).ready(function() {
+
+    $('html, body').hide();
+
+        if (window.location.hash) {
+
+        setTimeout(function() {
+
+        $('html, body').scrollTop(0).show();
+
+        $('html, body').animate({
+
+        scrollTop: $(window.location.hash).offset().top
+
+        }, 1000)
+
+        }, 0);
+
         }
-});
 
-$(document).on('touchend mouseout', '#stripes', function(event){
+        else {
 
-        event.stopPropagation();
-        event.preventDefault();
-        if(event.handled !== true) {
+        $('html, body').show();
 
-			   $("#stripes").stop().animate({scale:'1',opacity:'1'},300);
-
-            event.handled = true;
-        } else {
-            return false;
         }
-});
-*/
-/* MENU SIDE OPEN */
 
-var MENUSIDEOPEN = document.getElementById('stripes');
+    });
 
-MENUSIDEOPEN.addEventListener('click', function() {
-			   $("#main-container-menu").stop().animate({left:'0'},300);
-});
 
-/* BOUTON CROSS
 
-$(document).on('touchstart mouseover', '#cross-menu', function(event){
+    $(document).ready(function() {
+        $('#mc_embed_signup').find('form').ajaxChimp();
+    });
 
-        event.stopPropagation();
-        event.preventDefault();
-        if(event.handled !== true) {
 
-			   $("#cross-menu").stop().animate({scale:'1.2',opacity:'0.5'},300);
+  $('.filters ul li').click(function(){
+    $('.filters ul li').removeClass('active');
+    $(this).addClass('active');
 
-            event.handled = true;
-        } else {
-            return false;
-        }
-});
+    var data = $(this).attr('data-filter');
+    $grid.isotope({
+      filter: data
+    })
+  });
 
-$(document).on('touchend mouseout', '#cross-menu', function(event){
 
-        event.stopPropagation();
-        event.preventDefault();
-        if(event.handled !== true) {
+  if(document.getElementById("portfolio")){
+        var $grid = $(".grid").isotope({
+          itemSelector: ".all",
+          percentPosition: true,
+          masonry: {
+            columnWidth: ".all"
+          }
+        })
+  };
 
-			   $("#cross-menu").stop().animate({scale:'1',opacity:'1'},300);
 
-            event.handled = true;
-        } else {
-            return false;
-        }
-});
-*/
-/* MENU SIDE CLOSE */
 
-var MENUSIDECLOSE = document.getElementById('cross-menu');
+	$("#marha").click(function(){
+  
+    });
 
-MENUSIDECLOSE.addEventListener('click', function() {
 
-			   $("#main-container-menu").stop().animate({'left':'-100%'},300);
-});
 
-/* BOUTON MENU ARROW-2 */
-
-$(document).on('touchstart mouseover', '#wrapper-title-2', function(event){
-
-        event.stopPropagation();
-        event.preventDefault();
-        if(event.handled !== true) {
-
-			   $("#fleche-nav-2").stop().animate({rotate: '90deg',opacity:'1'},300);
-
-            event.handled = true;
-        } else {
-            return false;
-        }
-});
-
-$(document).on('touchend mouseout', '#wrapper-title-2', function(event){
-
-        event.stopPropagation();
-        event.preventDefault();
-        if(event.handled !== true) {
-
-			   $("#fleche-nav-2").stop().animate({rotate: '0deg',opacity:'0.5'},300);
-
-            event.handled = true;
-        } else {
-            return false;
-        }
-});
-
-/* BOUTON MENU ARROW-3 */
-
-$(document).on('touchstart mouseover', '#wrapper-title-3', function(event){
-
-        event.stopPropagation();
-        event.preventDefault();
-        if(event.handled !== true) {
-
-			   $("#fleche-nav-3").stop().animate({rotate: '90deg',opacity:'1'},300);
-
-            event.handled = true;
-        } else {
-            return false;
-        }
-});
-
-$(document).on('touchend mouseout', '#wrapper-title-3', function(event){
-
-        event.stopPropagation();
-        event.preventDefault();
-        if(event.handled !== true) {
-
-			   $("#fleche-nav-3").stop().animate({rotate: '0deg',opacity:'0.5'},300);
-
-            event.handled = true;
-        } else {
-            return false;
-        }
-});
-
-/* BOUTON MENU */
-/*
-$(document).on('touchstart mouseover', '#stripes', function(event){
-
-        event.stopPropagation();
-        event.preventDefault();
-        if(event.handled !== true) {
-
-			   $("#stripes").stop().animate({scale:'1.2',opacity:'0.5'},300);
-
-            event.handled = true;
-        } else {
-            return false;
-        }
-});
-
-$(document).on('touchend mouseout', '#stripes', function(event){
-
-        event.stopPropagation();
-        event.preventDefault();
-        if(event.handled !== true) {
-
-			   $("#stripes").stop().animate({scale:'1',opacity:'1'},300);
-
-            event.handled = true;
-        } else {
-            return false;
-        }
-});
-*/
-/* BOUTON NEXT */
-
-$(document).on('touchstart mouseover', '#oldnew-next', function(event){
-
-        event.stopPropagation();
-        event.preventDefault();
-        if(event.handled !== true) {
-
-			   $("#oldnew-next").stop().animate({scale:'1.2',opacity:'0.5'},300);
-
-            event.handled = true;
-        } else {
-            return false;
-        }
-});
-
-$(document).on('touchend mouseout', '#oldnew-next', function(event){
-
-        event.stopPropagation();
-        event.preventDefault();
-        if(event.handled !== true) {
-
-			   $("#oldnew-next").stop().animate({scale:'1',opacity:'1'},300);
-
-            event.handled = true;
-        } else {
-            return false;
-        }
-});
-
-/* BOUTON PREV */
-
-$(document).on('touchstart mouseover', '#oldnew-prev', function(event){
-
-        event.stopPropagation();
-        event.preventDefault();
-        if(event.handled !== true) {
-
-			   $("#oldnew-prev").stop().animate({scale:'1.2',opacity:'0.5'},300);
-
-            event.handled = true;
-        } else {
-            return false;
-        }
-});
-
-$(document).on('touchend mouseout', '#oldnew-prev', function(event){
-
-        event.stopPropagation();
-        event.preventDefault();
-        if(event.handled !== true) {
-
-			   $("#oldnew-prev").stop().animate({scale:'1',opacity:'1'},300);
-
-            event.handled = true;
-        } else {
-            return false;
-        }
-});
+ });
